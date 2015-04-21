@@ -3,6 +3,16 @@ public class Node {
 	private int _key;
 	private int _size;
 	
+	public void print() {
+		System.out.println("[");
+		if(_left != null)
+			_left.print();
+		System.out.println("] " + _key + " [");
+		if(_right != null)
+			_right.print();
+		System.out.println("]");
+	}
+	
 	public int getSize() {
 		return _size;
 	}

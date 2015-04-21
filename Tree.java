@@ -1,6 +1,13 @@
 public class Tree {
 	private Node _root;
 	
+	public void print() {
+		if(isEmpty())
+			System.out.println("[]");
+		else
+			_root.print();
+	}
+	
 	public Tree() {
 		_root = null;
 	}
@@ -13,7 +20,7 @@ public class Tree {
 		if(isEmpty())
 			return 0;
 		else
-			return _root.size();
+			return _root.getSize();
 	}
 	
 	public boolean exists(int val) {
@@ -27,7 +34,7 @@ public class Tree {
 		if(isEmpty())
 			return 0;
 		else
-			return _root.height();
+			return _root.getHeight();
 	}
 	
 	public void insert(int val) {
