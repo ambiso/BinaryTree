@@ -3,9 +3,10 @@ public class Tree {
 	
 	public void print() {
 		if(isEmpty())
-			System.out.println("[]");
+			System.out.print("[]");
 		else
 			_root.print();
+		System.out.println();
 	}
 	
 	public Tree() {

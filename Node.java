@@ -4,13 +4,13 @@ public class Node {
 	private int _size;
 	
 	public void print() {
-		System.out.println("[");
+		System.out.print("[");
 		if(_left != null)
 			_left.print();
-		System.out.println("] " + _key + " [");
+		System.out.print("] " + _key + " [");
 		if(_right != null)
 			_right.print();
-		System.out.println("]");
+		System.out.print("]");
 	}
 	
 	public int getSize() {
