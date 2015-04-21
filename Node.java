@@ -3,6 +3,23 @@ public class Node {
 	private int _key;
 	private int _size;
 	
+	public int getSize() {
+		return _size;
+	}
+	
+	private int max(int a, int b) {
+		return a > b ? a : b;
+	}
+	
+	public int getHeight() {
+		int a = -1, b = -1;
+		if(_left != null)
+			a = _left.getHeight();
+		if(_right != null)
+			b = _right.getHeight();
+		return max(a, b) + 1;
+	}
+	
 	public Node(int key) {
 		_key = key;
 	}

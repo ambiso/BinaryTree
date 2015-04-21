@@ -10,7 +10,10 @@ public class Tree {
 	}
 	
 	public int size() {
-		return 0;
+		if(isEmpty())
+			return 0;
+		else
+			return _root.size();
 	}
 	
 	public boolean exists(int val) {
@@ -21,7 +24,10 @@ public class Tree {
 	}
 	
 	public int height() {
-		return 0;
+		if(isEmpty())
+			return 0;
+		else
+			return _root.height();
 	}
 	
 	public void insert(int val) {
