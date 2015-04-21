@@ -1,8 +1,12 @@
 public class Tree {
 	private Node _root;
 	
+	public Tree() {
+		_root = null;
+	}
+	
 	public boolean isEmpty() {
-		return true;
+		return (_root == null);
 	}
 	
 	public int size() {
@@ -10,7 +14,10 @@ public class Tree {
 	}
 	
 	public boolean exists(int val) {
-		return true;
+		if(isEmpty())
+			return false;
+		else
+			return _root.find(val);
 	}
 	
 	public int height() {
@@ -18,7 +25,11 @@ public class Tree {
 	}
 	
 	public void insert(int val) {
-		
+		if(_root == null) {
+			_root = new Node(val);
+		} else {
+			_root.insert(val);
+		}
 	}
 	
 	public void delete(int val) {
