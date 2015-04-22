@@ -51,7 +51,10 @@ public class Tree {
 	}
 	
 	public int valueAtPosition(int k) {
-		return 0;
+		if(k < 0 || k > _root.getHeight()) {
+			throw new IllegalArgumentException("Cannot reach position " + k + ". (" + (k < 0 ? "too small)" : "too large)"));
+		}
+		return _root.valueAtPosition(k);
 	}
 	
 	public int position(int val) {

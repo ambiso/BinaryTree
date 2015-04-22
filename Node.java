@@ -78,6 +78,14 @@ public class Node {
 		}
 	}
 	
+	public boolean valueAtPosition(int k) {
+		//IMPLEMENTATION
+	}
+	
+	public int position(int val) {
+		
+	}
+	
 	private Node successor() {
 		//IMPLEMENTATION
 	}
