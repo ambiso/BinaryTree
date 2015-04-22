@@ -60,21 +60,19 @@ public class Node {
 		_size++;
 	}
 	
-	public boolean delete(int val) {
-		if(val == _key) {
-			//IMPLEMENTATION
-		}
-		
-		if(val > key) {
-			if(_left != null)
-				return _left.delete(key);
-			else
-				return false;
-		} else {
+	public Node findNode(int val) {
+		if(val == _key)
+			return this;
+		if(val > _key) {
 			if(_right != null)
-				return _right.delete(key)
+				return _right.findNode(val);
 			else
-				return false;
+				return null;
+		} else {
+			if(_left != null)
+				return _left.findNode(val);
+			else
+				return null;
 		}
 	}
 	
