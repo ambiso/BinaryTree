@@ -3,6 +3,26 @@ public class Node {
 	private int _key;
 	private int _size = 1;
 	
+	public Node(int key) {
+		_key = key;
+	}
+	
+	public Node getLeft() {
+		return _left;
+	}
+	
+	public Node getRight() {
+		return _right;
+	}
+	
+	public int getKey() {
+		return _key;
+	}
+	
+	public int getSize() {
+		return _size;
+	}
+	
 	public void inOrder() {
 		System.out.print("[");
 		if(_left != null)
@@ -11,10 +31,6 @@ public class Node {
 		if(_right != null)
 			_right.inOrder();
 		System.out.print("]");
-	}
-	
-	public int getSize() {
-		return _size;
 	}
 	
 	private int max(int a, int b) {
@@ -28,10 +44,6 @@ public class Node {
 		if(_right != null)
 			b = _right.getHeight();
 		return max(a, b) + 1;
-	}
-	
-	public Node(int key) {
-		_key = key;
 	}
 	
 	public boolean find(int val) {
