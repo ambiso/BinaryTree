@@ -1,15 +1,15 @@
 public class Node {
 	private Node _left, _right;
 	private int _key;
-	private int _size;
+	private int _size = 1;
 	
-	public void print() {
+	public void inOrder() {
 		System.out.print("[");
 		if(_left != null)
-			_left.print();
+			_left.inOrder();
 		System.out.print("] " + _key + " [");
 		if(_right != null)
-			_right.print();
+			_right.inOrder();
 		System.out.print("]");
 	}
 	
@@ -58,5 +58,31 @@ public class Node {
 				_left = new Node(val);
 		}
 		_size++;
+	}
+	
+	public boolean delete(int val) {
+		if(val == _key) {
+			//IMPLEMENTATION
+		}
+		
+		if(val > key) {
+			if(_left != null)
+				return _left.delete(key);
+			else
+				return false;
+		} else {
+			if(_right != null)
+				return _right.delete(key)
+			else
+				return false;
+		}
+	}
+	
+	private Node successor() {
+		//IMPLEMENTATION
+	}
+	
+	public void updateInfo() {
+		//IMPLEMENTATION
 	}
 }

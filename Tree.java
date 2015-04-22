@@ -1,11 +1,11 @@
 public class Tree {
 	private Node _root;
 	
-	public void print() {
+	public void inOrder() {
 		if(isEmpty())
 			System.out.print("[]");
 		else
-			_root.print();
+			_root.inOrder();
 		System.out.println();
 	}
 	
@@ -47,7 +47,7 @@ public class Tree {
 	}
 	
 	public void delete(int val) {
-		
+		//IMPLEMENTATION
 	}
 	
 	public int valueAtPosition(int k) {
