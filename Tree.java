@@ -61,7 +61,7 @@ public class Tree {
 		return 0;
 	}
 	
-	Iterable<Integer> values(int lo, int hi) {
+	public Iterable<Integer> values(int lo, int hi) {
 		return null;
 	}
 	
