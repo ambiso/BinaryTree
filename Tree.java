@@ -47,7 +47,30 @@ public class Tree {
 	}
 	
 	public void delete(int val) {
-		//IMPLEMENTATION
+		if(isEmpty())
+			return;
+		
+		Node toDelete = _root.findNode(val);
+		if(toDelete == null)
+			return;
+		//NEED PARENT
+		
+		Node tmp = toDelete;
+		if(tmp.getRight() == null) {
+			//NO SUCCESSOR NEED PREDECESSOR
+		} else {
+			Node successor = tmp;
+			while((tmp = tmp.getLeft()) != null) {
+				successor = tmp;
+			}			
+			//REPLACE toDelete WITH successor
+			
+			//REMEMBER RIGHT TREE OF successor
+			
+			//REPLACE RIGHT TREE OF successor WITH toDelete's
+			
+			//EMPLACE OLD RIGHT TREE OF successor		
+		}
 	}
 	
 	public int valueAtPosition(int k) {
