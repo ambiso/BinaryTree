@@ -24,13 +24,11 @@ public class Node {
 	}
 	
 	public void inOrder() {
-		System.out.print("[");
 		if(_left != null)
 			_left.inOrder();
-		System.out.print("] " + _key + " [");
+		System.out.print(" " + _key + "  ");
 		if(_right != null)
 			_right.inOrder();
-		System.out.print("]");
 	}
 	
 	private int max(int a, int b) {
@@ -88,19 +86,27 @@ public class Node {
 		}
 	}
 	
-	public boolean valueAtPosition(int k) {
-		//IMPLEMENTATION
+	public int valueAtPosition(int k) {
+		int ls = 0;
+		if((_left != null && (ls = _left.getSize()) == k) || (_left == null && k == 0))
+			return _key;
+		else if(_left != null && _left.getSize() > k)
+			return _left.valueAtPosition(k);
+		if(_right != null)
+			if(ls < k)
+				return _right.valueAtPosition(k-ls-1);
+		throw new IllegalStateException("ERROR: Key: " + _key + " _left: " + _left + " _right: " + _right + " k: " + k);
 	}
 	
 	public int position(int val) {
-		
+		return 0;
 	}
 	
 	private Node successor() {
-		//IMPLEMENTATION
+		return null;
 	}
 	
 	public void updateInfo() {
-		//IMPLEMENTATION
+		
 	}
 }

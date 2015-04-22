@@ -3,7 +3,6 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String... args) {
 		Tree x = new Tree();
-		
 		x.insert(30);
 		x.insert(20);
 		x.insert(45);
@@ -18,5 +17,10 @@ public class Main {
 		x.insert(12);
 		x.insert(14);
 		x.inOrder();
+		
+		Scanner sc = new Scanner(System.in);
+		while(sc.hasNextInt()) {
+			System.out.println(x.valueAtPosition(sc.nextInt()));
+		}
 	}
 }

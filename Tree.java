@@ -2,9 +2,7 @@ public class Tree {
 	private Node _root;
 	
 	public void inOrder() {
-		if(isEmpty())
-			System.out.print("[]");
-		else
+		if(!isEmpty())
 			_root.inOrder();
 		System.out.println();
 	}
@@ -74,8 +72,8 @@ public class Tree {
 	}
 	
 	public int valueAtPosition(int k) {
-		if(k < 0 || k > _root.getHeight()) {
-			throw new IllegalArgumentException("Cannot reach position " + k + ". (" + (k < 0 ? "too small)" : "too large)"));
+		if(k < 0 || k >= _root.getSize()) {
+			throw new IllegalArgumentException("Cannot reach position " + k + ". (" + (k < 0 ? "must be > 0)" : "must be < " + _root.getSize() + ")"));
 		}
 		return _root.valueAtPosition(k);
 	}
