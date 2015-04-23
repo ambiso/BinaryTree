@@ -55,19 +55,30 @@ public class Node {
 			return false;
 	}
 	
-	public void insert(int val) {
-		if(val >= _key) {
+	public boolean insert(int val) {
+		if(val == _key)
+			return false;
+		boolean inserted = true;
+		if(val > _key) {
 			if(_right != null)
-				_right.insert(val);
-			else
+				inserted = _right.insert(val);
+			else {
 				_right = new Node(val);
+				inserted = true;
+			}
 		} else {
 			if(_left != null)
-				_left.insert(val);
-			else
+				inserted = _left.insert(val);
+			else {
 				_left = new Node(val);
+				inserted = true;
+			}
 		}
-		_size++;
+		if(inserted) {
+			_size++;
+			return true;
+		}
+		return false;
 	}
 	
 	public Node findNode(int val) {
@@ -98,8 +109,14 @@ public class Node {
 		throw new IllegalStateException("ERROR: Key: " + _key + " _left: " + _left + " _right: " + _right + " k: " + k);
 	}
 	
-	public int position(int val) {
-		return 0;
+	public int position(int val) {	
+		int leftSize = _left != null ? _left.getSize() : 0;	
+		if(val == _key) //Have we found the element we need?
+			return leftSize; //Add left trees size
+		if(val < _key) //if is in left tree search there, else it would be inserted there
+			return _left != null ? _left.position(val) : 0;
+		else //if is in right tree, search there and add lefts size + ourself
+			return _right != null ? (_right.position(val) + leftSize + 1) : 1;
 	}
 	
 	private Node successor() {
