@@ -205,7 +205,7 @@ public class Tree {
 			//successor cannot be null because it had a right tree
 			//sucPar may be toDelete
 			if(parent.getLeft().getKey() == toDelete.getKey()) {
-				sucPar.getLeft()
+				sucPar.getLeft();
 				parent.setLeft(successor);
 				
 			} else {
