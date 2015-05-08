@@ -32,6 +32,10 @@ public class Tree {
 			_right = newRight;
 		}
 		
+		public void setSize(int size) {
+			_size = size;
+		}
+		
 		public void inOrder() {
 			if(_left != null)
 				_left.inOrder();
@@ -115,7 +119,7 @@ public class Tree {
 			if(_right != null)
 				if(ls < k)
 					return _right.valueAtPosition(k-ls-1);
-			throw new IllegalStateException("ERROR: Key: " + _key + " _left: " + _left + " _right: " + _right + " k: " + k);
+			throw new IllegalStateException("VALUEATPOSITION ERROR: Key: " + _key + " _left: " + _left + " _right: " + _right + " k: " + k);
 		}
 		
 		public int position(int val) {	
@@ -126,6 +130,19 @@ public class Tree {
 				return _left != null ? _left.position(val) : 0;
 			else //if is in right tree, search there and add lefts size + ourself
 				return _right != null ? (_right.position(val) + leftSize + 1) : 1;
+		}
+		
+		public void updateSize(int val) {
+			if(_key != val) {
+				if(val > _key) {
+					if(_right != null) {
+						_right.updateSize(val);
+					}
+				} else if(_left != null) {
+					_left.updateSize(val);
+				}
+			}
+			_size = (_left != null ? _left.getSize() : 0) + (_right != null ? _right.getSize() : 0) + 1;							
 		}
 	}
 
@@ -139,6 +156,57 @@ public class Tree {
 	
 	public Tree() {
 		_root = null;
+	}
+	
+	public void delete(int val) {
+		if(isEmpty())
+			return;
+		
+		Node toDelete = null, parent = null, successor = null, sucParent = null, setChild = null;
+		for(toDelete = _root; toDelete != null && toDelete.getKey() != val; toDelete = (val > toDelete.getKey() ? toDelete.getRight() : toDelete.getLeft())) {
+			parent = toDelete;
+		}
+		
+		if(toDelete == null)
+			return;
+		int updateSizeKey = -1;
+		if(toDelete.getLeft() == null && toDelete.getRight() == null) { //no child
+			if(parent != null) { //if we're deleting the root node, but it doesn't have any children we don't care about the size
+				updateSizeKey = parent.getKey();
+			}
+			setChild = null;
+		} else if(toDelete.getLeft() != null && toDelete.getRight() == null) { //left child
+			setChild = toDelete.getLeft();
+		} else if(toDelete.getLeft() == null && toDelete.getRight() != null) { //right child
+			setChild = toDelete.getRight();
+		} else { //2 children
+			for(successor = toDelete.getRight(); successor != null && successor.getLeft() != null; successor = successor.getLeft()) {
+				sucParent = successor;
+			}
+			setChild = successor;
+			if(sucParent != null) { //if successor is not just the right child
+				sucParent.setSize(sucParent.getSize()-1); //update Size
+				sucParent.setLeft(successor.getRight());
+				successor.setRight(toDelete.getRight());
+			}
+			successor.setLeft(toDelete.getLeft());
+		}
+		
+		if(parent == null) { //if we tried to delete the root node, reset it
+			_root = setChild;
+		} else {
+			if(val > parent.getKey()) { //if delete is right
+				parent.setRight(setChild);
+			} else {
+				parent.setLeft(setChild);
+			}
+		}
+		if(setChild != null) {
+			updateSizeKey = setChild.getKey();
+		}
+		if(_root != null) {
+			_root.updateSize(updateSizeKey);
+		}
 	}
 	
 	public boolean isEmpty() {
@@ -174,53 +242,12 @@ public class Tree {
 		}
 	}
 	
-	public void delete(int val) {
-		if(isEmpty())
-			return;
-		
-		Node toDelete = _root, parent = toDelete;
-		
-		while(toDelete != null && toDelete.getKey() != val) {
-			parent = toDelete;
-			if(val > toDelete.getKey()) {
-				toDelete = toDelete.getRight();
-			} else {
-				toDelete = toDelete.getLeft();
-			}
-		}
-				
-		if(toDelete == null)
-			return;
-		System.out.println("toDelete: " + toDelete.getKey() + " parent:" + parent.getKey());
-		if(toDelete.getRight() == null) { //no successor, just replace toDelete with left Node
-			parent.setLeft(toDelete.getLeft());
-		} else {
-			Node tmp = toDelete.getRight(), successor = tmp, sucPar = successor;
-			while(tmp != null) {
-				sucPar = successor;
-				successor = tmp;
-				tmp = tmp.getLeft();
-			}
-			System.out.println("Successor: " + successor.getKey() + " Parent: " + sucPar.getKey());
-			//successor cannot be null because it had a right tree
-			//sucPar may be toDelete
-			if(parent.getLeft().getKey() == toDelete.getKey()) {
-				sucPar.getLeft();
-				parent.setLeft(successor);
-				
-			} else {
-				parent.setRight(successor);
-			}
-			//REPLACE toDelete WITH successor
-			
-			//REMEMBER RIGHT TREE OF successor
-			
-			//REPLACE RIGHT TREE OF successor WITH toDelete's
-			
-			//EMPLACE OLD RIGHT TREE OF successor		
+	public void minsert(int... val) {
+		for(int x : val) {
+			insert(x);
 		}
 	}
-	
+		
 	public int valueAtPosition(int k) {
 		if(k < 0 || k >= _root.getSize()) {
 			throw new IllegalArgumentException("Cannot reach position " + k + ". (" + (k < 0 ? "must be > 0)" : "must be < " + _root.getSize() + ")"));
@@ -233,6 +260,7 @@ public class Tree {
 	}
 	
 	public Iterable<Integer> values(int lo, int hi) {
+		
 		return null;
 	}
 	

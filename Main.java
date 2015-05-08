@@ -17,10 +17,12 @@ public class Main {
 		x.insert(12);
 		x.insert(14);
 		x.inOrder();
-		
+		System.out.println("Size: " + x.size());
 		Scanner sc = new Scanner(System.in);
 		while(sc.hasNextInt()) {
-			System.out.println(x.valueAtPosition(sc.nextInt()));
+			x.delete(sc.nextInt());
+			x.inOrder();
+			System.out.println("Size: " + x.size());
 		}
 	}
 }
