@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 public class Tree {
 	public class Node {
 		private Node _left, _right;
@@ -144,8 +146,34 @@ public class Tree {
 			}
 			_size = (_left != null ? _left.getSize() : 0) + (_right != null ? _right.getSize() : 0) + 1;							
 		}
+		
+		public void valuesLoHi(int lo, int hi, Vector<Integer> ret) {
+			if(lo < _key && _left != null)
+				_left.valuesLoHi(lo, hi, ret);
+			if(_key >= lo && _key <= hi)
+				ret.add(_key);
+			if(hi > _key && _right != null)
+				_right.valuesLoHi(lo, hi, ret);
+		}
+		
+		public void valuesHiLo(int lo, int hi, Vector<Integer> ret, int lowV, int uppV) {
+			if(!(_key < lo && lowV > hi) && _left != null)
+				_left.valuesHiLo(lo, hi, ret, lowV, _key);
+			if(_key <= hi || _key >= lo)
+				ret.add(_key);
+			if(!(_key > hi && uppV < lo) && _right != null)
+				_right.valuesHiLo(lo, hi, ret, _key, uppV);
+		}
+		
+		public void balance(Tree out) {
+			if(_left != null)
+				_left.balance(out);
+			out.insert(_key);
+			if(_right != null)
+				_right.balance(out);
+		}
 	}
-
+	
 	private Node _root;
 	
 	public void inOrder() {
@@ -161,7 +189,6 @@ public class Tree {
 	public void delete(int val) {
 		if(isEmpty())
 			return;
-		
 		Node toDelete = null, parent = null, successor = null, sucParent = null, setChild = null;
 		for(toDelete = _root; toDelete != null && toDelete.getKey() != val; toDelete = (val > toDelete.getKey() ? toDelete.getRight() : toDelete.getLeft())) {
 			parent = toDelete;
@@ -183,13 +210,14 @@ public class Tree {
 			for(successor = toDelete.getRight(); successor != null && successor.getLeft() != null; successor = successor.getLeft()) {
 				sucParent = successor;
 			}
-			setChild = successor;
+			setChild = successor; //for parent.child replacement and updating size of parent nodes
+			
 			if(sucParent != null) { //if successor is not just the right child
-				sucParent.setSize(sucParent.getSize()-1); //update Size
-				sucParent.setLeft(successor.getRight());
-				successor.setRight(toDelete.getRight());
-			}
-			successor.setLeft(toDelete.getLeft());
+				sucParent.setLeft(successor.getRight()); //orphaned successor's child
+				successor.setRight(toDelete.getRight()); //successor seizing toDeletes right tree
+				successor.updateSize(sucParent.getKey()); //fix broken sizes between successor and sucPar
+			} //else keep right tree
+			successor.setLeft(toDelete.getLeft()); //successor seizing toDeletes left tree
 		}
 		
 		if(parent == null) { //if we tried to delete the root node, reset it
@@ -229,7 +257,7 @@ public class Tree {
 	
 	public int height() {
 		if(isEmpty())
-			return 0;
+			return -1;
 		else
 			return _root.getHeight();
 	}
@@ -247,6 +275,10 @@ public class Tree {
 			insert(x);
 		}
 	}
+	
+	private Node getRoot() {
+		return _root;
+	}
 		
 	public int valueAtPosition(int k) {
 		if(k < 0 || k >= _root.getSize()) {
@@ -260,11 +292,33 @@ public class Tree {
 	}
 	
 	public Iterable<Integer> values(int lo, int hi) {
-		
-		return null;
+		Vector<Integer> col = new Vector<Integer>(size());
+		if(isEmpty())
+			return col;
+		if(lo > hi) {
+			_root.valuesHiLo(lo, hi, col, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		} else {
+			_root.valuesLoHi(lo, hi, col);
+		}
+		return col;
 	}
 	
 	public void simpleBalance() {
-		
+		if(isEmpty())
+			return;
+		if(_root.getSize() < 3)
+			return;
+		Tree balanced = new Tree();
+		balanceRecursion(balanced, 0, size()-1);
+		_root = balanced.getRoot();
+	}
+	
+	private void balanceRecursion(Tree in, int low, int high) {
+		int med = (low+high)/2;
+		in.insert(valueAtPosition(med));
+		if(med-1 >= low)
+			balanceRecursion(in, low, med-1);
+		if(med+1 <= high)
+			balanceRecursion(in, med+1, high);
 	}
 }
