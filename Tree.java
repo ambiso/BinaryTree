@@ -139,7 +139,7 @@ public class Tree {
     
     private Node _root = null;
     private Node foundNode = null;
-    int foundLo = Integer.MAX_VALUE, foundHi = Integer.MIN_VALUE;
+    int foundLo = Integer.MIN_VALUE, foundHi = Integer.MAX_VALUE;
     private boolean foundNodeStillValid = false, lastVATStillValid = false,
                     heightStillValid = false;
     private Node lastVATNode = null;
@@ -246,26 +246,32 @@ public class Tree {
         if(isEmpty())
             return false;
         if(foundNodeStillValid && foundNode != null && val > foundLo && val < foundHi) {
-            find(val, foundNode, false);
+            foundNode = find(val, foundNode, false);
         } else {
-            find(val, _root, true);
+            foundNode = find(val, _root, true);
         }
+        foundNodeStillValid = true;
         return foundNode != null;
     }
     
-    private void find(int val, Node cursor, boolean set) {
-        if(set) {
-            foundLo = Integer.MAX_VALUE;
-            foundHi = Integer.MIN_VALUE;
+    private Node find(int val, Node cursor, boolean set) {
+        if(set) { //whether or not to reset the boundaries
+            foundLo = Integer.MIN_VALUE;
+            foundHi = Integer.MAX_VALUE;
         }
-        for(; cursor != null && cursor.getKey() != val; cursor = (val > cursor.getKey() ? cursor.getRight() : cursor.getLeft())) {
+        while(cursor != null && cursor.getKey() != val) {
             int key = cursor.getKey();
-            if(key < foundLo)
-                foundLo = key;
-            if(key > foundHi)
-                foundHi = key;
+            if(val > key) {
+                if(key > foundLo)
+                    foundLo = key;
+                cursor = cursor.getRight();
+            } else {
+                if(key < foundHi)
+                    foundHi = key;
+                cursor = cursor.getLeft();
+            }
         }
-        foundNode = cursor;
+        return cursor;
     }
     
     /**
