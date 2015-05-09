@@ -272,6 +272,7 @@ public class Tree {
     
     /**
      * Will insert a given key into the tree if it does not exist already
+     * @param val unique key to be inserted
      */
     public void insert(int val) {
         if(_root == null) {
@@ -310,6 +311,7 @@ public class Tree {
     }
     
     /**
+     * Will insert any number of unique given keys into the tree.
      * @param val argument list of keys to be inserted
      */
     public void minsert(int... val) {
