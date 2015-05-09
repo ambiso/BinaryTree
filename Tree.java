@@ -2,10 +2,19 @@ package ads1.ss15.pa;
 
 import java.util.Vector;
 
+/**
+ * @author 1427251
+ */
 public class Tree {
+    
+    /**This class provides the main storage function of a tree. Apart from
+     * keeping track of its children and its own value it also stores the size
+     * of its subtree consisting of itself, the left and the right tree
+     * @see Tree
+     */
     public class Node {
         private Node _left, _right;
-        private int _key;
+        private final int _key;
         private int _size = 1;
         
         public Node(int key) {
@@ -79,7 +88,8 @@ public class Tree {
             if(val < _key) //if is in left tree search there, else it would be inserted there
                 return _left != null ? _left.position(val) : 0;
             else //if is in right tree, search there and add lefts size + ourself
-                return _right != null ? (_right.position(val) + leftSize + 1) : 1;
+                return _right != null ? 
+                      (_right.position(val) + leftSize + 1) : 1;
         }
         
         public void updateSize(int val) {
@@ -96,7 +106,8 @@ public class Tree {
         }
         
         public void updateSize() {
-            _size = (_left != null ? _left.getSize() : 0) + (_right != null ? _right.getSize() : 0) + 1;
+            _size = (_left != null ? _left.getSize() : 0) + 
+                    (_right != null ? _right.getSize() : 0) + 1;
         }
         
         public void valuesLoHi(int lo, int hi, Vector<Integer> ret) {
@@ -133,6 +144,9 @@ public class Tree {
     private Node lastVATNode = null;
     private int lastVATPosition = -1;
     
+    /**
+     * Will print an In-Order Traversal of the Tree
+     */
     public void inOrder() {
         if(!isEmpty())
             _root.inOrder();
@@ -142,6 +156,12 @@ public class Tree {
     public Tree() {
     }
     
+    /**
+     * Delete an element in the tree and replace it with a successor if one
+     * can be found.
+     * @param val The key to be deleted
+     * @throws IllegalStateException if an internal logic error has occurred
+     */
     public void delete(int val) {
         if(isEmpty())
             return;
@@ -192,10 +212,16 @@ public class Tree {
         }
     }
     
+    /**
+     * @return boolean value whether or not the tree contains elements
+     */
     public boolean isEmpty() {
         return (_root == null);
     }
     
+    /**
+     * @return the number of elements stored in the tree
+     */
     public int size() {
         if(isEmpty())
             return 0;
@@ -203,6 +229,11 @@ public class Tree {
             return _root.getSize();
     }
     
+    /**
+     * Checks whether a key exists within the tree
+     * @param val key to search for
+     * @return true = key exists, false = key does not exist
+     */
     public boolean exists(int val) {
         if(isEmpty())
             return false;
@@ -229,6 +260,9 @@ public class Tree {
         foundNode = cursor;
     }
     
+    /**
+     * @return the number of elements vertically-1
+     */
     public int height() {
         if(isEmpty())
             return -1;
@@ -236,6 +270,9 @@ public class Tree {
             return _root.getHeight();
     }
     
+    /**
+     * Will insert a given key into the tree if it does not exist already
+     */
     public void insert(int val) {
         if(_root == null) {
             foundNodeStillValid = false;
@@ -272,6 +309,9 @@ public class Tree {
             throw new IllegalStateException("FIXSIZE ERROR: Cursor = null even though it shouldn't be.");
     }
     
+    /**
+     * @param val argument list of keys to be inserted
+     */
     public void minsert(int... val) {
         for(int x : val) {
             insert(x);
@@ -282,6 +322,12 @@ public class Tree {
         return _root;
     }
     
+    /**
+     * Will efficiently determine a key at a certain position within the In-
+     * Order-Traversal.
+     * @param k the position in the In-Order-Traversal (0 to size())
+     * @return key stored at position k
+     */
     public int valueAtPosition(int k) {
         if(k < 0 || k >= _root.getSize()) {
             throw new IllegalArgumentException("Cannot reach position " + k + ". (" + (k < 0 ? "must be > 0)" : "must be < " + _root.getSize() + ")"));
@@ -301,13 +347,9 @@ public class Tree {
         
         lastVATPosition = k;
         Node cursor = _root;
-        while(true) {
-            int leftSize = 0;
-            if((cursor.getLeft() != null && (leftSize = cursor.getLeft().getSize()) == k) || (cursor.getLeft() == null && k == 0)) {
-                lastVATNode = cursor;
-                lastVATStillValid = true;
-                return cursor.getKey();
-            } else if(cursor.getLeft() != null && cursor.getLeft().getSize() > k) {
+        int leftSize = 0;
+        while(!((cursor.getLeft() != null && (leftSize = cursor.getLeft().getSize()) == k) || (cursor.getLeft() == null && k == 0))) {
+            if(cursor.getLeft() != null && cursor.getLeft().getSize() > k) {
                 cursor = cursor.getLeft();
             } else if(cursor.getRight() != null && leftSize < k) {
                 k = k-leftSize-1;
@@ -315,13 +357,28 @@ public class Tree {
             } else {
                 throw new IllegalStateException("VALUEATPOSITION ERROR: INTERNAL LOGIC FAILED");
             }
+            leftSize = 0;
         }
+        lastVATNode = cursor;
+        lastVATStillValid = true;
+        return cursor.getKey();
     }
     
+    /**
+     * Will determine the postion of a key in the In-Order-Traversal
+     * @param val key to search for
+     * @return postion of a key in the In-Order-Traversal
+     */
     public int position(int val) {
         return _root.position(val);
     }
     
+    /**
+     * Will return all elements greater or equal to lo and less or equal to hi
+     * @param lo elements greater or equal to lo will be included
+     * @param hi elements less or equal to hi will be included
+     * @return sorted vector of elements
+     */
     public Iterable<Integer> values(int lo, int hi) {
         Vector<Integer> col = new Vector<Integer>(size());
         if(isEmpty())
@@ -334,6 +391,10 @@ public class Tree {
         return col;
     }
     
+    /**
+     * Will balance the tree so that the height difference of the left and right
+     * subtree never exceeds + or -1
+     */
     public void simpleBalance() {
         foundNodeStillValid = false;
         lastVATStillValid = false;
