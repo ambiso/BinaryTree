@@ -140,9 +140,21 @@ public class Tree {
     private Node _root = null;
     private Node foundNode = null;
     int foundLo = Integer.MAX_VALUE, foundHi = Integer.MIN_VALUE;
-    private boolean foundNodeStillValid = false, lastVATStillValid = false;
+    private boolean foundNodeStillValid = false, lastVATStillValid = false,
+                    heightStillValid = false;
     private Node lastVATNode = null;
-    private int lastVATPosition = -1;
+    private int lastVATPosition = -1, height = -1;
+    
+    
+    public Tree() {
+    
+    }
+    
+    private void invalidate() {
+        foundNodeStillValid = false;
+        lastVATStillValid = false;
+        heightStillValid = false;
+    }
     
     /**
      * Will print an In-Order Traversal of the Tree
@@ -151,9 +163,6 @@ public class Tree {
         if(!isEmpty())
             _root.inOrder();
         System.out.println();
-    }
-    
-    public Tree() {
     }
     
     /**
@@ -176,8 +185,7 @@ public class Tree {
             return;
         }
         
-        foundNodeStillValid = false;
-        lastVATStillValid = false;
+        invalidate();
         
         if(toDelete.getLeft() == null && toDelete.getRight() == null) {
             setChild = null;
@@ -266,8 +274,10 @@ public class Tree {
     public int height() {
         if(isEmpty())
             return -1;
-        else
-            return _root.getHeight();
+        else if(!heightStillValid) {
+            height = _root.getHeight();
+        }
+        return height;
     }
     
     /**
@@ -276,8 +286,7 @@ public class Tree {
      */
     public void insert(int val) {
         if(_root == null) {
-            foundNodeStillValid = false;
-            lastVATStillValid = false;
+            invalidate();
             _root = new Node(val);
         } else {
             Node cursor, parent = null;
@@ -291,8 +300,7 @@ public class Tree {
             }
             if(parent == null)
                 throw new IllegalStateException("INSERT ERROR: Parent = null even though it shouldn't be.");
-            foundNodeStillValid = false;
-            lastVATStillValid = false;
+            invalidate();
             if(val > parent.getKey()) {
                 parent.setRight(new Node(val));
             } else {
@@ -323,7 +331,7 @@ public class Tree {
     private Node getRoot() {
         return _root;
     }
-    
+    int maxV = -1;
     /**
      * Will efficiently determine a key at a certain position within the In-
      * Order-Traversal.
@@ -339,9 +347,11 @@ public class Tree {
             if(k == lastVATPosition) {
                 return lastVATNode.getKey();
             } else if(k == lastVATPosition-1 && lastVATNode.getLeft() != null && lastVATNode.getLeft().getRight() == null) {
+                lastVATPosition = k;
                 lastVATNode = lastVATNode.getLeft();
                 return lastVATNode.getKey();
             } else if(k == lastVATPosition+1 && lastVATNode.getRight() != null && lastVATNode.getRight().getLeft() == null) {
+                lastVATPosition = k;
                 lastVATNode = lastVATNode.getRight();
                 return lastVATNode.getKey();
             }
@@ -398,8 +408,7 @@ public class Tree {
      * subtree never exceeds + or -1
      */
     public void simpleBalance() {
-        foundNodeStillValid = false;
-        lastVATStillValid = false;
+        invalidate();
         if(isEmpty())
             return;
         if(_root.getSize() < 3)
