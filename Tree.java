@@ -245,7 +245,7 @@ public class Tree {
     public boolean exists(int val) {
         if(isEmpty())
             return false;
-        if(foundNodeStillValid && foundNode != null) {
+        if(foundNodeStillValid && foundNode != null && val > foundLo && val < foundHi) {
             find(val, foundNode, false);
         } else {
             find(val, _root, true);
@@ -331,7 +331,6 @@ public class Tree {
     private Node getRoot() {
         return _root;
     }
-    int maxV = -1;
     /**
      * Will efficiently determine a key at a certain position within the In-
      * Order-Traversal.
