@@ -72,18 +72,6 @@ public class Tree {
                 return false;
         }
         
-        public Node valueAtPosition(int k) {
-            int ls = 0;
-            if((_left != null && (ls = _left.getSize()) == k) || (_left == null && k == 0))
-                return this;
-            else if(_left != null && _left.getSize() > k)
-                return _left.valueAtPosition(k);
-            if(_right != null)
-                if(ls < k)
-                    return _right.valueAtPosition(k-ls-1);
-            throw new IllegalStateException("VALUEATPOSITION ERROR: Key: " + _key + " _left: " + _left + " _right: " + _right + " k: " + k);
-        }
-        
         public int position(int val) {
             int leftSize = _left != null ? _left.getSize() : 0;
             if(val == _key) //Have we found the element we need?
@@ -141,9 +129,9 @@ public class Tree {
     private Node _root = null;
     private Node foundNode = null;
     int foundLo = Integer.MAX_VALUE, foundHi = Integer.MIN_VALUE;
-    private boolean foundNodeStillValid = true;
-    private Node lastValueAt = null;
-    private int lastValueAtPosition = -1;
+    private boolean foundNodeStillValid = false, lastVATStillValid = false;
+    private Node lastVATNode = null;
+    private int lastVATPosition = -1;
     
     public void inOrder() {
         if(!isEmpty())
@@ -155,7 +143,6 @@ public class Tree {
     }
     
     public void delete(int val) {
-        foundNodeStillValid = false;
         if(isEmpty())
             return;
         Node toDelete = null, parent = null, successor = null, sucParent = null, setChild = null;
@@ -168,6 +155,10 @@ public class Tree {
             _root.updateSize(val); //fix size if the element wasn't found.
             return;
         }
+        
+        foundNodeStillValid = false;
+        lastVATStillValid = false;
+        
         if(toDelete.getLeft() == null && toDelete.getRight() == null) {
             setChild = null;
         } else if(toDelete.getLeft() != null && toDelete.getRight() == null) { //left child
@@ -245,35 +236,10 @@ public class Tree {
             return _root.getHeight();
     }
     
-    /*public boolean insert(int val) {
-            if(val == _key)
-                return false;
-            boolean inserted; //need not be initialized because it is always set
-            if(val > _key) {
-                if(_right != null)
-                    inserted = _right.insert(val);
-                else {
-                    _right = new Node(val);
-                    inserted = true;
-                }
-            } else {
-                if(_left != null)
-                    inserted = _left.insert(val);
-                else {
-                    _left = new Node(val);
-                    inserted = true;
-                }
-            }
-            if(inserted) {
-                _size++;
-                return true;
-            }
-            return false;
-        }*/
-    
     public void insert(int val) {
         if(_root == null) {
             foundNodeStillValid = false;
+            lastVATStillValid = false;
             _root = new Node(val);
         } else {
             Node cursor, parent = null;
@@ -288,6 +254,7 @@ public class Tree {
             if(parent == null)
                 throw new IllegalStateException("INSERT ERROR: Parent = null even though it shouldn't be.");
             foundNodeStillValid = false;
+            lastVATStillValid = false;
             if(val > parent.getKey()) {
                 parent.setRight(new Node(val));
             } else {
@@ -319,17 +286,36 @@ public class Tree {
         if(k < 0 || k >= _root.getSize()) {
             throw new IllegalArgumentException("Cannot reach position " + k + ". (" + (k < 0 ? "must be > 0)" : "must be < " + _root.getSize() + ")"));
         }
-        if(lastValueAtPosition == k)
-            return lastValueAt.getKey();
-        if(lastValueAt != null && lastValueAtPosition != -1 && k == lastValueAtPosition+1 && lastValueAt.getRight() != null && lastValueAt.getRight().getLeft() == null) {
-            lastValueAt = lastValueAt.getRight();
-        } else if(lastValueAt != null && lastValueAtPosition != -1 && k == lastValueAtPosition-1 && lastValueAt.getLeft() != null && lastValueAt.getLeft().getRight() == null) {
-            lastValueAt = lastValueAt.getLeft();
-        } else {
-            lastValueAt = _root.valueAtPosition(k);
+        
+        if(lastVATStillValid) {
+            if(k == lastVATPosition) {
+                return lastVATNode.getKey();
+            } else if(k == lastVATPosition-1 && lastVATNode.getLeft() != null && lastVATNode.getLeft().getRight() == null) {
+                lastVATNode = lastVATNode.getLeft();
+                return lastVATNode.getKey();
+            } else if(k == lastVATPosition+1 && lastVATNode.getRight() != null && lastVATNode.getRight().getLeft() == null) {
+                lastVATNode = lastVATNode.getRight();
+                return lastVATNode.getKey();
+            }
         }
-        lastValueAtPosition = k;
-        return lastValueAt.getKey();
+        
+        lastVATPosition = k;
+        Node cursor = _root;
+        while(true) {
+            int leftSize = 0;
+            if((cursor.getLeft() != null && (leftSize = cursor.getLeft().getSize()) == k) || (cursor.getLeft() == null && k == 0)) {
+                lastVATNode = cursor;
+                lastVATStillValid = true;
+                return cursor.getKey();
+            } else if(cursor.getLeft() != null && cursor.getLeft().getSize() > k) {
+                cursor = cursor.getLeft();
+            } else if(cursor.getRight() != null && leftSize < k) {
+                k = k-leftSize-1;
+                cursor = cursor.getRight();
+            } else {
+                throw new IllegalStateException("VALUEATPOSITION ERROR: INTERNAL LOGIC FAILED");
+            }
+        }
     }
     
     public int position(int val) {
@@ -350,6 +336,7 @@ public class Tree {
     
     public void simpleBalance() {
         foundNodeStillValid = false;
+        lastVATStillValid = false;
         if(isEmpty())
             return;
         if(_root.getSize() < 3)
