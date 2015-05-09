@@ -144,7 +144,11 @@ public class Tree {
 					_left.updateSize(val);
 				}
 			}
-			_size = (_left != null ? _left.getSize() : 0) + (_right != null ? _right.getSize() : 0) + 1;							
+			updateSize();						
+		}
+		
+		public void updateSize() {
+			_size = (_left != null ? _left.getSize() : 0) + (_right != null ? _right.getSize() : 0) + 1;
 		}
 		
 		public void valuesLoHi(int lo, int hi, Vector<Integer> ret) {
@@ -191,16 +195,15 @@ public class Tree {
 			return;
 		Node toDelete = null, parent = null, successor = null, sucParent = null, setChild = null;
 		for(toDelete = _root; toDelete != null && toDelete.getKey() != val; toDelete = (val > toDelete.getKey() ? toDelete.getRight() : toDelete.getLeft())) {
+			toDelete.setSize(toDelete.getSize()-1); //update size of nodes while moving down
 			parent = toDelete;
 		}
 		
-		if(toDelete == null)
+		if(toDelete == null) {
+			_root.updateSize(val); //fix size if the element wasn't found.
 			return;
-		int updateSizeKey = -1;
-		if(toDelete.getLeft() == null && toDelete.getRight() == null) { //no child
-			if(parent != null) { //if we're deleting the root node, but it doesn't have any children we don't care about the size
-				updateSizeKey = parent.getKey();
-			}
+		}
+		if(toDelete.getLeft() == null && toDelete.getRight() == null) {
 			setChild = null;
 		} else if(toDelete.getLeft() != null && toDelete.getRight() == null) { //left child
 			setChild = toDelete.getLeft();
@@ -208,6 +211,7 @@ public class Tree {
 			setChild = toDelete.getRight();
 		} else { //2 children
 			for(successor = toDelete.getRight(); successor != null && successor.getLeft() != null; successor = successor.getLeft()) {
+				successor.setSize(successor.getSize()-1); //update size of Nodes while traversing down
 				sucParent = successor;
 			}
 			setChild = successor; //for parent.child replacement and updating size of parent nodes
@@ -215,9 +219,9 @@ public class Tree {
 			if(sucParent != null) { //if successor is not just the right child
 				sucParent.setLeft(successor.getRight()); //orphaned successor's child
 				successor.setRight(toDelete.getRight()); //successor seizing toDeletes right tree
-				successor.updateSize(sucParent.getKey()); //fix broken sizes between successor and sucPar
 			} //else keep right tree
 			successor.setLeft(toDelete.getLeft()); //successor seizing toDeletes left tree
+			successor.updateSize();
 		}
 		
 		if(parent == null) { //if we tried to delete the root node, reset it
@@ -228,12 +232,6 @@ public class Tree {
 			} else {
 				parent.setLeft(setChild);
 			}
-		}
-		if(setChild != null) {
-			updateSizeKey = setChild.getKey();
-		}
-		if(_root != null) {
-			_root.updateSize(updateSizeKey);
 		}
 	}
 	
