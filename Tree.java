@@ -72,32 +72,6 @@ public class Tree {
                 return false;
         }
         
-        public boolean insert(int val) {
-            if(val == _key)
-                return false;
-            boolean inserted; //need not be initialized because it is always set
-            if(val > _key) {
-                if(_right != null)
-                    inserted = _right.insert(val);
-                else {
-                    _right = new Node(val);
-                    inserted = true;
-                }
-            } else {
-                if(_left != null)
-                    inserted = _left.insert(val);
-                else {
-                    _left = new Node(val);
-                    inserted = true;
-                }
-            }
-            if(inserted) {
-                _size++;
-                return true;
-            }
-            return false;
-        }
-        
         public Node valueAtPosition(int k) {
             int ls = 0;
             if((_left != null && (ls = _left.getSize()) == k) || (_left == null && k == 0))
@@ -271,13 +245,64 @@ public class Tree {
             return _root.getHeight();
     }
     
+    /*public boolean insert(int val) {
+            if(val == _key)
+                return false;
+            boolean inserted; //need not be initialized because it is always set
+            if(val > _key) {
+                if(_right != null)
+                    inserted = _right.insert(val);
+                else {
+                    _right = new Node(val);
+                    inserted = true;
+                }
+            } else {
+                if(_left != null)
+                    inserted = _left.insert(val);
+                else {
+                    _left = new Node(val);
+                    inserted = true;
+                }
+            }
+            if(inserted) {
+                _size++;
+                return true;
+            }
+            return false;
+        }*/
+    
     public void insert(int val) {
-        foundNodeStillValid = false;
         if(_root == null) {
+            foundNodeStillValid = false;
             _root = new Node(val);
         } else {
-            _root.insert(val);
+            Node cursor, parent = null;
+            for(cursor = _root; cursor != null && cursor.getKey() != val; cursor = (val > cursor.getKey() ? cursor.getRight() : cursor.getLeft())) {
+                cursor.setSize(cursor.getSize()+1);
+                parent = cursor;
+            }
+            if(cursor != null && val == cursor.getKey()) {
+                fixSize(val);
+                return;
+            }
+            if(parent == null)
+                throw new IllegalStateException("INSERT ERROR: Parent = null even though it shouldn't be.");
+            foundNodeStillValid = false;
+            if(val > parent.getKey()) {
+                parent.setRight(new Node(val));
+            } else {
+                parent.setLeft(new Node(val));
+            }
         }
+    }
+    
+    private void fixSize(int val) {
+        Node cursor;
+        for(cursor = _root; cursor != null && cursor.getKey() != val; cursor = (val > cursor.getKey() ? cursor.getRight() : cursor.getLeft())) {
+            cursor.setSize(cursor.getSize()-1);
+        }
+        if(cursor == null)
+            throw new IllegalStateException("FIXSIZE ERROR: Cursor = null even though it shouldn't be.");
     }
     
     public void minsert(int... val) {
