@@ -348,22 +348,28 @@ public class Tree {
             throw new IllegalArgumentException("Cannot reach position " + k + ". (" + (k < 0 ? "must be > 0)" : "must be < " + _root.getSize() + ")"));
         }
         
+        boolean optimizedFind = false;
         if(lastVATStillValid) {
             if(k == lastVATPosition) {
                 return lastVATNode.getKey();
-            } else if(k == lastVATPosition-1 && lastVATNode.getLeft() != null && lastVATNode.getLeft().getRight() == null) {
-                lastVATPosition = k;
-                lastVATNode = lastVATNode.getLeft();
-                return lastVATNode.getKey();
-            } else if(k == lastVATPosition+1 && lastVATNode.getRight() != null && lastVATNode.getRight().getLeft() == null) {
-                lastVATPosition = k;
-                lastVATNode = lastVATNode.getRight();
-                return lastVATNode.getKey();
+            } else if(lastVATNode.getLeft() != null && lastVATPosition-lastVATNode.getLeft().getSize() <= k && lastVATPosition > k) {
+                lastVATNode = findVAT(lastVATNode.getLeft(), k-(lastVATPosition-lastVATNode.getLeft().getSize()));
+                optimizedFind = true;
+            } else if(lastVATNode.getRight() != null && lastVATPosition+lastVATNode.getRight().getSize() >= k && lastVATPosition < k) {
+                lastVATNode = findVAT(lastVATNode.getRight(), k-lastVATPosition-1);
+                optimizedFind = true;
             }
         }
         
+        if(!optimizedFind) {
+            lastVATNode = findVAT(_root, k);
+        }
         lastVATPosition = k;
-        Node cursor = _root;
+        lastVATStillValid = true;
+        return lastVATNode.getKey();
+    }
+    
+    private Node findVAT(Node cursor, int k) {
         int leftSize = 0;
         while(!((cursor.getLeft() != null && (leftSize = cursor.getLeft().getSize()) == k) || (cursor.getLeft() == null && k == 0))) {
             if(cursor.getLeft() != null && cursor.getLeft().getSize() > k) {
@@ -376,9 +382,7 @@ public class Tree {
             }
             leftSize = 0;
         }
-        lastVATNode = cursor;
-        lastVATStillValid = true;
-        return cursor.getKey();
+        return cursor;
     }
     
     /**
