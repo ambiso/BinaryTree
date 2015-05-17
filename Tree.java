@@ -246,19 +246,17 @@ public class Tree {
         if(isEmpty())
             return false;
         if(foundNodeStillValid && foundNode != null && val > foundLo && val < foundHi) {
-            foundNode = find(val, foundNode, false);
+            foundNode = find(val, foundNode);
         } else {
-            foundNode = find(val, _root, true);
+            foundLo = Integer.MIN_VALUE;
+            foundHi = Integer.MAX_VALUE;
+            foundNode = find(val, _root);
         }
         foundNodeStillValid = true;
         return foundNode != null;
     }
     
-    private Node find(int val, Node cursor, boolean set) {
-        if(set) { //whether or not to reset the boundaries
-            foundLo = Integer.MIN_VALUE;
-            foundHi = Integer.MAX_VALUE;
-        }
+    private Node find(int val, Node cursor) {
         while(cursor != null && cursor.getKey() != val) {
             int key = cursor.getKey();
             if(val > key) {
@@ -401,7 +399,12 @@ public class Tree {
      * @return sorted ArrayList of elements
      */
     public Iterable<Integer> values(int lo, int hi) {
-        ArrayList<Integer> col = new ArrayList<Integer>(size());
+        ArrayList<Integer> col;
+        try {
+            col = new ArrayList<Integer>(size());
+        } catch(OutOfMemoryError e) {
+            col = new ArrayList<Integer>();
+        }
         if(isEmpty())
             return col;
         if(lo > hi) {
