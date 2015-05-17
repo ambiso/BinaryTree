@@ -1,6 +1,6 @@
 package ads1.ss15.pa;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * @author 1427251
@@ -110,7 +110,7 @@ public class Tree {
                     (_right != null ? _right.getSize() : 0) + 1;
         }
         
-        public void valuesLoHi(int lo, int hi, Vector<Integer> ret) {
+        public void valuesLoHi(int lo, int hi, ArrayList<Integer> ret) {
             if(lo < _key && _left != null)
                 _left.valuesLoHi(lo, hi, ret);
             if(_key >= lo && _key <= hi)
@@ -119,7 +119,7 @@ public class Tree {
                 _right.valuesLoHi(lo, hi, ret);
         }
         
-        public void valuesHiLo(int lo, int hi, Vector<Integer> ret, int loV, int hiV) {
+        public void valuesHiLo(int lo, int hi, ArrayList<Integer> ret, int loV, int hiV) {
             if(!(_key < lo && loV > hi) && _left != null)
                 _left.valuesHiLo(lo, hi, ret, loV, _key);
             if(_key <= hi || _key >= lo)
@@ -398,10 +398,10 @@ public class Tree {
      * Will return all elements greater or equal to lo and less or equal to hi
      * @param lo elements greater or equal to lo will be included
      * @param hi elements less or equal to hi will be included
-     * @return sorted vector of elements
+     * @return sorted ArrayList of elements
      */
     public Iterable<Integer> values(int lo, int hi) {
-        Vector<Integer> col = new Vector<Integer>(size());
+        ArrayList<Integer> col = new ArrayList<Integer>(size());
         if(isEmpty())
             return col;
         if(lo > hi) {
