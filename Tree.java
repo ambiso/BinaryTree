@@ -2,9 +2,6 @@ package ads1.ss15.pa;
 
 import java.util.ArrayList;
 
-/**
- * @author 1427251
- */
 public class Tree {
     
     /**This class provides the main storage function of a tree. Apart from
